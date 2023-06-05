@@ -1,0 +1,7 @@
+.git/
+node_modules/
+.gitignore
+package*
+old.html
+v2.html
+scripts/config.js
