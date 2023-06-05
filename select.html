@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Bouton Select</title>
+</head>
+
+<body>
+    <select id="talent_grade_id"></select>
+
+    <script>
+        function populateSelect(selectId, dataEndpoint) {
+            const select = document.getElementById(selectId);
+
+            // Vérifier si les données sont présentes dans le session storage
+            const storedData = sessionStorage.getItem(selectId);
+            const storedTimestamp = sessionStorage.getItem(`${selectId}_timestamp`);
+            const currentTime = new Date().getTime();
+            const dataAge = storedTimestamp ? currentTime - parseInt(storedTimestamp) : Infinity;
+
+            if (storedData && dataAge < 24 * 60 * 60 * 1000) { // Données disponibles et âgées de moins d'un jour
+                populateOptions(select, JSON.parse(storedData));
+            } else {
+                // Appeler l'API pour récupérer les données
+                fetch(dataEndpoint)
+                    .then(response => response.json())
+                    .then(data => {
+                        populateOptions(select, data);
+
+                        // Mettre à jour les données dans le session storage
+                        sessionStorage.setItem(selectId, JSON.stringify(data));
+                        sessionStorage.setItem(`${selectId}_timestamp`, currentTime.toString());
+                    })
+                    .catch(error => {
+                        console.error(`Erreur lors de l'appel à l'API : ${error}`);
+                    });
+            }
+        }
+
+        function populateOptions(select, data) {
+            select.innerHTML = ''; // Effacer les options existantes
+
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '0';
+            defaultOption.text = 'Sélectionner une valeur';
+            select.appendChild(defaultOption);
+
+            // Ajouter les options avec les données
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.text = item.name;
+                select.appendChild(option);
+            });
+        }
+
+        // Appel de la fonction pour chaque select
+        populateSelect('talent_grade_id', 'http://localhost:3000/palm/api/v1/talent_grades/');
+
+    </script>
+</body>
+
+</html>
