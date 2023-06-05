@@ -1,5 +1,3 @@
-import config_URL from './config.js';
-
 function determineSessionStorageIsLessThan1D(selectId, dataEndpoint) {
     const storedData = sessionStorage.getItem(selectId);
     const storedTimestamp = sessionStorage.getItem(`${selectId}_timestamp`);
@@ -12,5 +10,5 @@ function determineSessionStorageIsLessThan1D(selectId, dataEndpoint) {
   
   var updateSession = determineSessionStorageIsLessThan1D(
     "talent_status_id",
-    config_URL.talent_status
+    "http//localhost:3000/palm/api/v1/talent_status/"
   );
